@@ -1,0 +1,20 @@
+; ( 1 3 (5 7) 9)
+(display "\n" )
+
+(define lst (list 1 3 (list 5 7) 9))
+(display lst)
+(display ': )
+(display (car (cdaddr lst)))
+(display "\n" )
+
+(define lst (list (list 7)))
+(display lst)
+(display ': )
+(display (caar lst))
+(display "\n" )
+
+(define lst (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+(display lst)
+(display ': )
+(display (cadar (cdar (cdadr (cadadr lst)))))
+(display "\n" )

@@ -1,0 +1,10 @@
+(define (make-monitored func)
+    (let ((calls 0))
+    (lambda (argument)
+        (cond ((eq? argument 'how-many-calls? ) calls)
+            ((number? argument) 
+                (begin (set! calls (+ calls 1))
+                (func argument)))
+        (else (error "Unknown request")))
+        
+        )))
