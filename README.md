@@ -1,3 +1,5 @@
+Part of my ultralearning project TeachYourselfCS
+
 # To use scheme and load the functions:
 
 Instead of typing `scheme`, type `scm`.
