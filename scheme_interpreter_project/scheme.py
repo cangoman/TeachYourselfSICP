@@ -75,6 +75,25 @@ def apply_primitive(procedure, args, env):
     4
     """
     "*** YOUR CODE HERE ***"
+    arg_list = []
+    if not scheme_listp(args):
+        raise SchemeError('arguments are not in a list: {0}'.format(args))
+
+    while args is not nil:
+        arg_list.append(args.first)
+        args = args.second
+
+    if procedure.use_env is True:
+        arg_list.append(env)
+    
+    try:
+        val = procedure.fn(*arg_list)
+    except TypeError:
+        raise SchemeError('Error in function call')
+    
+    return val
+
+    
 
 ################
 # Environments #
@@ -98,6 +117,17 @@ class Frame:
     def lookup(self, symbol):
         """Return the value bound to SYMBOL.  Errors if SYMBOL is not found."""
         "*** YOUR CODE HERE ***"
+        frame = self
+
+        while frame is not None:
+            val = frame.bindings.get(symbol)
+        
+            if val:
+                return val
+            
+            frame = frame.parent
+
+
         raise SchemeError("unknown identifier: {0}".format(str(symbol)))
 
 
