@@ -230,7 +230,11 @@ def do_define_form(vals, env):
     if scheme_symbolp(target):
         check_form(vals, 2, 2)
         "*** YOUR CODE HERE ***"
+        env.bindings[target] = scheme_eval(vals[1], env)
+        
+        return target
     elif isinstance(target, Pair):
+        print('Pair? -- these are procedures')
         "*** YOUR CODE HERE ***"
     else:
         raise SchemeError("bad argument to define")
@@ -239,7 +243,7 @@ def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
     "*** YOUR CODE HERE ***"
-    return quote(vals[0])
+    return vals[0]
 
 
 def do_let_form(vals, env):

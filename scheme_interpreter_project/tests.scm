@@ -1,3 +1,9 @@
+(define x '(1 2))
+; expect x
+
+x
+; expect quote ((1 2))
+
 ;;; Test cases for Scheme.
 ;;;
 ;;; In order to run only a prefix of these examples, add the line
@@ -56,7 +62,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Move the following (exit) line to run additional tests. ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(exit)
+
 
 
 ;;; 1.1.2
@@ -78,6 +84,7 @@ size
 circumference
 ; expect 62.8318
 
+(exit)
 ;;; 1.1.4
 
 (define (square x) (* x x))
