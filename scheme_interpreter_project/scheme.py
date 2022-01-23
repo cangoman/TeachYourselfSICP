@@ -60,17 +60,15 @@ def scheme_apply(procedure, args, env):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
-        # Create new frame
-        frame = Frame(env)
-        # bind all values to parameters
-        for i,formal in enumerate(procedure.formals):
-           frame.bindings[formal] = args[i]
-        
+
+        frame = procedure.env.make_call_frame(procedure.formals, args)
         #eval the procedure
         return scheme_eval(procedure.body, frame)
 
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
+        frame = env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, frame)
     else:
         raise SchemeError("Cannot call {0}".format(str(procedure)))
 
@@ -243,6 +241,12 @@ def do_mu_form(vals):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    vals = vals.second
+    body = vals.first
+    if len(vals) > 1:
+        body = Pair('begin', vals)
+    
+    return MuProcedure(formals, body)
 
 def do_define_form(vals, env):
     """Evaluate a define form with parameters VALS in environment ENV."""
@@ -256,6 +260,8 @@ def do_define_form(vals, env):
     elif isinstance(target, Pair):
         "*** YOUR CODE HERE ***"
         fn_name = target.first
+        if not scheme_symbolp(fn_name):
+            raise SchemeError(f"bad argument to define ({fn_name})")
         formals = target.second
         check_formals(formals)
         lambda_vals = Pair(formals, vals.second )
@@ -263,7 +269,7 @@ def do_define_form(vals, env):
         env.bindings[fn_name] = fn
         return fn_name
     else:
-        raise SchemeError("bad argument to define")
+        raise SchemeError(f"bad argument to define ({target})")
 
 def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
@@ -283,6 +289,11 @@ def do_let_form(vals, env):
     # Add a frame containing bindings
     names, values = nil, nil
     "*** YOUR CODE HERE ***"
+
+    for i in range(len(bindings)-1, -1, -1):
+        names = Pair(bindings[i][0], names)
+        values = Pair((scheme_eval(bindings[i][1], env)), values)
+
     new_env = env.make_call_frame(names, values)
 
     # Evaluate all but the last expression after bindings, and return the last
@@ -347,9 +358,7 @@ def do_or_form(vals, env):
                 return val
             vals = vals.second
         
-        return False
-    else:
-        return True
+    return False
 
 def do_cond_form(vals, env):
     """Evaluate cond form with parameters VALS in environment ENV."""

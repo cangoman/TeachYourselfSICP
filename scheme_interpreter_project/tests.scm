@@ -38,6 +38,15 @@ x
 (if #f 'True )
 ; expect okay
 
+(define f (mu (x) (+ x y)))
+; expect f
+
+(define g (lambda (x y) (f (+ x x))))
+; expect g
+
+(g 3 7)
+;expect 13
+
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
 
