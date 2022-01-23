@@ -269,7 +269,7 @@ def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
     "*** YOUR CODE HERE ***"
-    return vals[0]
+    return vals.first
 
 
 def do_let_form(vals, env):
@@ -343,6 +343,7 @@ def do_or_form(vals, env):
             val = scheme_eval(vals.first, env)
 
             if scheme_true(val):
+                val = quote(val)
                 return val
             vals = vals.second
         
@@ -365,6 +366,14 @@ def do_cond_form(vals, env):
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
             "*** YOUR CODE HERE ***"
+            # print(clause)
+            if len(clause) == 1:
+                return scheme_eval(quote(clause.first), env)
+            elif len(clause) == 2:
+                return scheme_eval(quote(clause[1]), env)
+            else:
+                return scheme_eval(do_begin_form(clause.second, env), env)
+
     return okay
 
 def do_begin_form(vals, env):
