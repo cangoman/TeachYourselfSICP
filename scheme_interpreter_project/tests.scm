@@ -1,8 +1,5 @@
-(define x '(1 2))
-; expect x
 
-x
-; expect quote ((1 2))
+
 
 ;;; Test cases for Scheme.
 ;;;
@@ -13,6 +10,33 @@ x
 ;;; after the last test you wish to run.
 
 ;;; *** Add more of your own here! ***
+
+(define x '(1 2))
+; expect x
+
+x
+; expect (1 2)
+
+(begin 30 'hello)
+; expect hello
+
+(begin (+ 1 2) (+ 1 3) (+ 1 4))
+;expect 5
+
+(define (myFn a b c) (+ (* a b c c) (+ a b)))
+; expect myFn
+
+(myFn 1 2 3)
+;expect 21
+
+(if #t 'True 'False)
+; expect True
+
+(if #f 'True 'False)
+; expect False
+
+(if #f 'True )
+; expect okay
 
 ;;; These are examples from several sections of "The Structure
 ;;; and Interpretation of Computer Programs" by Abelson and Sussman.
@@ -81,10 +105,11 @@ size
 ; expect 314.159
 
 (define circumference (* 2 pi radius))
+; expect circumference
 circumference
 ; expect 62.8318
 
-(exit)
+
 ;;; 1.1.4
 
 (define (square x) (* x x))
@@ -111,6 +136,8 @@ circumference
   (sum-of-squares (+ a 1) (* a 2)))
 (f 5)
 ; expect 136
+
+(exit)
 
 ;;; 1.1.6
 
