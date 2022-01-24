@@ -127,13 +127,10 @@ class Frame:
         frame = self
 
         while frame is not None:
-            val = frame.bindings.get(symbol)
-        
-            if val:
-                return val
+            if symbol in frame.bindings:
+                return frame.bindings[symbol]
             
             frame = frame.parent
-
 
         raise SchemeError("unknown identifier: {0}".format(str(symbol)))
 
@@ -377,11 +374,11 @@ def do_cond_form(vals, env):
             "*** YOUR CODE HERE ***"
             # print(clause)
             if len(clause) == 1:
-                return scheme_eval(quote(clause.first), env)
+                return test
             elif len(clause) == 2:
-                return scheme_eval(quote(clause[1]), env)
+                return clause[1]
             else:
-                return scheme_eval(do_begin_form(clause.second, env), env)
+                return do_begin_form(clause.second, env)
 
     return okay
 

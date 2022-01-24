@@ -20,11 +20,15 @@
 
 ; Problem 18
 
-;; Merge two lists LIST1 and LIST2 according to COMP and return
-;; the merged lists.
+; Merge two lists LIST1 and LIST2 according to COMP and return
+; the merged lists.
 (define (merge comp list1 list2)
     ; *** YOUR CODE HERE ***
-    nil)
+    (cond ((null? list1) list2)
+          ((null? list2) list1)
+          ((comp (car list1 ) (car list2)) (cons (car list1) (merge comp (cdr list1) list2 )))
+          (else (cons (car list2) (merge comp list1 (cdr list2))))))
+
 
 (merge < '(1 5 7 9) '(4 8 10))
 ; expect (1 4 5 7 8 9 10)
