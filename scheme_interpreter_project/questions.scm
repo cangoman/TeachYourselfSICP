@@ -66,15 +66,33 @@
 
 ;; A list of all ways to partition TOTAL, where  each partition must
 ;; be at most MAX-VALUE and there are at most MAX-PIECES partitions.
+; (define (list-partitions total max-pieces max-value)
+;   ; *** YOUR CODE HERE ***
+;   '())
+(define (generate-partitions total max-pieces max-value list) 
+  (cond  ((eq? 0 total) (cons list nil))
+         ((eq? 0 max-pieces) nil)
+         ((eq? 0 max-value) nil)
+         ((< total 0) nil)
+         (else (append
+                  (generate-partitions (- total max-value) (- max-pieces 1) max-value (cons max-value list)) 
+                  (generate-partitions total max-pieces (- max-value 1) list)))))
+
+
+;  THIS BREAKS QUESTION 18.... WHYYY????
 (define (list-partitions total max-pieces max-value)
   ; *** YOUR CODE HERE ***
-  nil)
-
+  (generate-partitions total max-pieces max-value nil)
+  
+)
+  
 ; Problem 19 tests rely on correct Problem 18.
 (sort-lists (list-partitions 5 2 4))
 ; expect ((4 1) (3 2))
+; (list-partitions 5 2 4)
 (sort-lists (list-partitions 7 3 5))
 ; expect ((5 2) (5 1 1) (4 3) (4 2 1) (3 3 1) (3 2 2))
+; (list-partitions 7 3 5)
 
 
 ; Problem 20

@@ -310,10 +310,12 @@ def do_if_form(vals, env):
     "*** YOUR CODE HERE ***"
     expr = vals[0]
     if (scheme_true(scheme_eval(expr, env))):
-        return scheme_eval(vals[1], env)
+        # special forms are evaluated, so this was evaluating twice
+        # return scheme_eval(vals[1], env) 
+        return vals[1]
     else:
         if len(vals) == 3:
-            return scheme_eval(vals[2], env)
+            return vals[2]
         else:
             return okay
 
@@ -374,22 +376,34 @@ def do_cond_form(vals, env):
             "*** YOUR CODE HERE ***"
             # print(clause)
             if len(clause) == 1:
-                return test
+                return quote(test)
             elif len(clause) == 2:
                 return clause[1]
             else:
                 return do_begin_form(clause.second, env)
-
+            # body = clause.second
+            # if len(body) > 1:
+            #     return Pair('begin', body)
+            # elif len(body) == 1:
+            #     return body.first
+            # else:
+            #     return quote(test)
+    print('empty cond form')
     return okay
 
 def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
     "*** YOUR CODE HERE ***"
-    for _ in range(len(vals) - 1):
-        scheme_eval(vals.first, env)
-        vals = vals.second
-    return vals.first
+    if vals.second == nil:
+        return vals.first
+    scheme_eval(vals.first, env)
+    return do_begin_form(vals.second, env)
+    # return do_begin_form(vals.second, env)
+    # for _ in range(len(vals) - 1):
+    #     scheme_eval(vals.first, env)
+    #     vals = vals.second
+    # return vals.first
 
 LOGIC_FORMS = {
         "and": do_and_form,
