@@ -66,9 +66,6 @@
 
 ;; A list of all ways to partition TOTAL, where  each partition must
 ;; be at most MAX-VALUE and there are at most MAX-PIECES partitions.
-; (define (list-partitions total max-pieces max-value)
-;   ; *** YOUR CODE HERE ***
-;   '())
 (define (generate-partitions total max-pieces max-value list) 
   (cond  ((eq? 0 total) (cons list nil))
          ((eq? 0 max-pieces) nil)
@@ -78,8 +75,6 @@
                   (generate-partitions (- total max-value) (- max-pieces 1) max-value (cons max-value list)) 
                   (generate-partitions total max-pieces (- max-value 1) list)))))
 
-
-;  THIS BREAKS QUESTION 18.... WHYYY????
 (define (list-partitions total max-pieces max-value)
   ; *** YOUR CODE HERE ***
   (generate-partitions total max-pieces max-value nil)
@@ -130,9 +125,51 @@
 
 ;; Takes a TREE of numbers and outputs a list of sums from following each
 ;; possible path from root to leaf.
-(define (tree-sums tree)
-  ; *** YOUR CODE HERE ***
-  nil)
+
+; this groups and displays all the leaf nodes....
+; (define (tree-sums tree)
+;   ; *** YOUR CODE HERE ***
+;   ( cond ((null? (children tree)) (entry tree))
+;           ((null? tree) nil)
+;           (else map (lambda (x) (+ (entry tree) x)) (map tree-sums (children tree)))))
+
+(define (map-add value list) 
+  (map (lambda (x) (+ value x)) list))
+
+; (define (tree-sums tree)
+;   ; *** YOUR CODE HERE ***
+;   ( cond ((null? tree) nil)
+;           ((null? (children tree)) (list (entry tree)))
+;           (else (number? (entry tree)) ; entry is a single number
+;             ; a list of (+ (entry tree) tree)
+;             (+ (entry tree) (tree-sums (children tree))) 
+           
+;           )
+;   ))
+
+(define (flatten x)
+  (cond ((null? x) '())
+        ((pair? x) (append (flatten (car x)) (flatten (cdr x))))
+        (else (list x))))
+
+(define (safe-sum value val-list) 
+    (if (list? val-list)
+      (map (lambda (x) (safe-sum value x)) val-list)
+      (+ value val-list)
+    ))
+
+(define (find-sums tree)
+  ( cond ((null? tree) nil)
+          ((null? (children tree)) (entry tree))
+          (else (map (lambda (x) (safe-sum (entry tree) (tree-sums x))) (children tree))
+          ))
+)
+
+(define (tree-sums tree) (flatten (find-sums tree)))
+          
+
+          
+
 
 (tree-sums tree)
 ; expect (20 19 13 16 11)
