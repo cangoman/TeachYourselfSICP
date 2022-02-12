@@ -1,4 +1,7 @@
+.DS_STORE
 *.zip
 *.pdf
 */__pycache__
 /scheme
+*/img/
+*.gif
