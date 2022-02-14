@@ -191,7 +191,13 @@ class ThrowerAnt(Ant):
         Problem B5: This method returns None if there is no Bee in range.
         """
         "*** YOUR CODE HERE ***"
-        return random_or_none(self.place.bees)
+        nearest_place = self.place
+        while nearest_place != hive:
+            if len(nearest_place.bees) > 0:
+                return random_or_none(nearest_place.bees)
+            nearest_place = nearest_place.entrance
+        
+        return None
 
     def throw_at(self, target):
         """Throw a leaf at the target Bee, reducing its armor."""
@@ -462,10 +468,14 @@ class FireAnt(Ant):
     name = 'Fire'
     damage = 3
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 4
 
     def reduce_armor(self, amount):
-        "*** YOUR CODE HERE ***"
+        self.armor -= amount
+        if self.armor <= 0:
+            for bee in self.place.bees.copy():
+                bee.reduce_armor(self.damage)
 
 
 class LongThrower(ThrowerAnt):
