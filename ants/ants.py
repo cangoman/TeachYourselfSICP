@@ -45,20 +45,33 @@ class Place:
         if insect.is_ant():
             # Phase 2: Special handling for BodyguardAnt
             "*** YOUR CODE HERE ***"
+            if self.ant:
+                if self.ant.can_contain(insect):
+                    self.ant.contain_ant(insect)
+                    return
+                elif insect.can_contain(self.ant):
+                    insect.contain_ant(self.ant)
+                    self.ant = insect
+                    return
+
             assert self.ant is None, 'Two ants in {0}'.format(self)
             self.ant = insect
         else:
             self.bees.append(insect)
         insect.place = self
+        
 
     def remove_insect(self, insect):
         """Remove an Insect from this Place."""
         if not insect.is_ant():
             self.bees.remove(insect)
         else:
-            assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
+            # assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
             "*** YOUR CODE HERE ***"
-            self.ant = None
+            if isinstance(insect, BodyguardAnt):
+                self.ant = self.ant.ant
+            else:
+                self.ant = None
 
         insect.place = None
 
@@ -147,6 +160,8 @@ class Ant(Insect):
     damage = 0
     food_cost = 0
     blocks_path = True
+    container = False
+    container_ant = None
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
@@ -154,6 +169,9 @@ class Ant(Insect):
 
     def is_ant(self):
         return True
+
+    def can_contain(self, other):
+        return self.container and self.ant is None and not other.container 
 
 
 class HarvesterAnt(Ant):
@@ -196,6 +214,8 @@ class ThrowerAnt(Ant):
         """
         "*** YOUR CODE HERE ***"
         nearest_place = self.place
+        if nearest_place is None and self.container_ant is not None:
+            nearest_place = self.container_ant.place
 
         for i in range(self.min_range):
             if nearest_place is not None and nearest_place.entrance != hive:
@@ -204,7 +224,7 @@ class ThrowerAnt(Ant):
                 return None
         
         i = 0
-        while nearest_place != hive and i <= self.max_range:
+        while nearest_place != hive and i <= self.max_range and nearest_place is not None:
             if len(nearest_place.bees) > 0:
                 return random_or_none(nearest_place.bees)
             nearest_place = nearest_place.entrance
@@ -586,7 +606,12 @@ class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 4
+    armor = 2
+    ant = None
+    container = True
+
 
     def __init__(self):
         Ant.__init__(self, 2)
@@ -594,9 +619,16 @@ class BodyguardAnt(Ant):
 
     def contain_ant(self, ant):
         "*** YOUR CODE HERE ***"
+        self.ant = ant
+
+    def contain_ant(self, ant):
+        self.ant = ant
+        self.ant.container_ant = self
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
+        if self.ant:
+            self.ant.action(colony)
 
 class QueenPlace:
     """A place that represents both places in which the bees find the queen.
