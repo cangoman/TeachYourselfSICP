@@ -546,7 +546,9 @@ class ScubaThrower(ThrowerAnt):
 
     name = 'Scuba'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    watersafe = True
+    food_cost = 5
 
 
 class HungryAnt(Ant):
@@ -555,7 +557,10 @@ class HungryAnt(Ant):
     """
     name = 'Hungry'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    time_to_digest = 3
+    digesting = 0
+    food_cost = 4
 
     def __init__(self):
         Ant.__init__(self)
@@ -563,9 +568,18 @@ class HungryAnt(Ant):
 
     def eat_bee(self, bee):
         "*** YOUR CODE HERE ***"
+        if bee is not None:
+            bee.reduce_armor(bee.armor)
+            self.digesting = self.time_to_digest
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
+        if self.digesting > 0:
+            self.digesting -= 1
+        else:
+            bee = random_or_none(self.place.bees)
+            if bee is not None:
+                self.eat_bee(bee)
 
 
 class BodyguardAnt(Ant):
