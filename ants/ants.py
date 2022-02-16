@@ -70,7 +70,7 @@ class Place:
             "*** YOUR CODE HERE ***"
             if isinstance(insect, BodyguardAnt):
                 self.ant = self.ant.ant
-            else:
+            elif not isinstance(insect, QueenAnt) or not insect.is_true:
                 self.ant = None
 
         insect.place = None
@@ -620,10 +620,8 @@ class BodyguardAnt(Ant):
     def contain_ant(self, ant):
         "*** YOUR CODE HERE ***"
         self.ant = ant
-
-    def contain_ant(self, ant):
-        self.ant = ant
         self.ant.container_ant = self
+
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
@@ -638,26 +636,60 @@ class QueenPlace:
     """
     def __init__(self, colony_queen, ant_queen):
         "*** YOUR CODE HERE ***"
+        self.colony_queen = colony_queen
+        self.ant_queen = ant_queen
 
     @property
     def bees(self):
         "*** YOUR CODE HERE ***"
+        return self.colony_queen.bees + self.ant_queen.bees
 
 class QueenAnt(ScubaThrower):
     """The Queen of the colony.  The game is over if a bee enters her place."""
 
     name = 'Queen'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    food_cost = 6
+    implemented = True
+    num_queens = 0
+    doubled_ants = []
 
     def __init__(self):
         ScubaThrower.__init__(self, 1)
         "*** YOUR CODE HERE ***"
+        if QueenAnt.num_queens == 0:
+            self.is_true = True
+        else:
+            self.is_true = False    
+        QueenAnt.num_queens += 1
 
     def action(self, colony):
         """A queen ant throws a leaf, but also doubles the damage of ants
         in her tunnel.  Impostor queens do only one thing: die."""
         "*** YOUR CODE HERE ***"
+        if self.is_true == False:
+            self.reduce_armor(self.armor)
+        else:
+            colony.queen = QueenPlace(colony.queen, self.place)
+            ScubaThrower.action(self, colony)
+            place = self.place
+
+            # get to one end (the hive)
+            while place and place.entrance is not None and not isinstance(place.entrance, Hive):
+                place = place.entrance
+            
+            # traverse towards the other end
+            while place is not None:
+                if place.ant and not isinstance(place.ant, QueenAnt):
+                    if place.ant not in self.doubled_ants:
+                        place.ant.damage *= 2
+                        self.doubled_ants.append(place.ant)
+                elif place.ant and isinstance(place.ant, BodyguardAnt):
+                    if place.ant.ant and not isinstance(place.ant.ant, QueenAnt):
+                        place.ant.ant.damage *= 2
+                        self.doubled_ants.append(place.ant.ant)
+                place = place.exit
+
 
 class AntRemover(Ant):
     """Allows the player to remove ants from the board in the GUI."""
